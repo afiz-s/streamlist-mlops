@@ -1,25 +1,18 @@
-import numpy as np
-import altair as alt
-import pandas as pd
 import streamlit as st
+import pandas as pd
+from ml_model import get_movie_recommendations
 
-st.header('Recommendation App')
+st.title('AI Movies Recommendation System - AbacusAI + Streamlit by Afiz')
 
-# Example 1
+movies_data = pd.read_csv('relatedmovies/movies_metadata.csv')
+st.subheader(f'Movies List')
+st.dataframe(movies_data)
 
-st.write('Hello, *World!* :sunglasses:')
+name =  st.text_input("Enter Movie ID to find similar movies", key="name") 
 
-# Example 2
-
-st.write(1234)
-
-# Example 3
-st.write('## Users Metadata :sunglasses:')
-df = pd.read_csv('./relatedmovies/users_metadata.csv')
-st.write(df.head())
-
-# Example 4
-
-st.write('## Movies Metadata :sunglasses:')
-df_movies = pd.read_csv('./relatedmovies/movies_metadata.csv')
-st.write(df_movies.head())
+if name:
+    movie_name = movies_data[movies_data.movie_id==int(name)].movie.item()
+    st.subheader(f'Similar Movies of -> {movie_name}')
+    data = get_movie_recommendations('1', name)
+    data = [int(value['movie_id']) for value in data]
+    st.dataframe(movies_data[movies_data.movie_id.isin(data)])
